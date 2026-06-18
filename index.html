@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة أبو سالم لتعليم القيادة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --gold: #f1c40f;
+            --bg: #f4f7f6;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --mandatory: #2980b9;
+            --ground: #d35400;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-header {
+            background: linear-gradient(135deg, #0f1c2e, #1e3a5f);
+            color: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-icon {
+            width: 65px; height: 65px;
+            background: linear-gradient(145deg, #f1c40f, #f39c12);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; color: #1e3a5f;
+            box-shadow: 0 0 20px rgba(241,196,15,0.5);
+            border: 3px solid white;
+        }
+        .school-name h1 { font-size: 1.6rem; margin: 0; }
+        .school-name .subtitle { color: #f1c40f; font-size: 0.9rem; font-weight: bold; }
+        .lang-selector {
+            padding: 8px 16px; border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15);
+            color: white; font-weight: bold; font-size: 15px; cursor: pointer;
+        }
+        .lang-selector option { color: #1e3a5f; }
+        .container { max-width: 1300px; margin: 25px auto; padding: 0 20px; flex: 1; }
+        .tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; }
+        .tab {
+            padding: 10px 16px; border: none; border-radius: 30px;
+            background: white; color: var(--primary); font-weight: bold; font-size: 14px;
+            cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: 0.3s; border: 2px solid transparent;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .tab.active { background: var(--primary); color: white; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        .tab:hover { background: var(--primary); color: white; }
+        .section { display: none; animation: fadeIn 0.4s; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .signs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; margin-top: 15px; }
+        .sign-card {
+            background: white; border-radius: 14px; padding: 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; border: 2px solid #eee;
+        }
+        .sign-card:hover { transform: translateY(-6px); box-shadow: 0 12px 25px rgba(0,0,0,0.12); border-color: var(--gold); }
+        .sign-card img { width: 90px; height: 90px; object-fit: contain; margin-bottom: 12px; }
+        .sign-card h3 { color: #2c3e50; margin: 0 0 5px; font-size: 16px; }
+        .sign-card .desc { color: #666; font-size: 13px; margin-bottom: 5px; }
+        .quiz-section { background: white; border-radius: 18px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .quiz-image { max-width: 130px; max-height: 130px; margin: 15px auto; display: block; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 500px; margin: 20px auto; }
+        @media (max-width: 500px) { .options { grid-template-columns: 1fr; } }
+        .option-btn {
+            padding: 14px; border: 2px solid var(--primary);
+            background: #f0f4f8; border-radius: 12px; font-size: 16px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; color: var(--primary);
+        }
+        .option-btn:hover { background: var(--primary); color: white; }
+        .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
+        .option-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { font-size: 20px; font-weight: bold; margin: 10px 0; min-height: 30px; }
+        .next-btn { background: var(--primary); color: white; border: none; padding: 12px 28px; border-radius: 25px; font-size: 16px; cursor: pointer; display: none; margin: 10px auto 0; }
+        .footer-bar { background: var(--primary); color: white; text-align: center; padding: 18px; margin-top: 30px; }
+        .whatsapp-float {
+            position: fixed; bottom: 25px; right: 25px; width: 58px; height: 58px;
+            background: #25d366; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 28px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 99; text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-area">
+            <div class="logo-icon">🚗</div>
+            <div class="school-name">
+                <h1 id="mainTitle">مدرسة أبو سالم لتعليم القيادة</h1>
+                <div class="subtitle">Abu Salem Driving School</div>
+            </div>
+        </div>
+        <select class="lang-selector" id="langSelect" onchange="changeLanguage()">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="ur">اردو</option>
+            <option value="bn">বাংলা</option>
+        </select>
+    </header>
+
+    <div class="container">
+        <div class="tabs" id="tabsContainer"></div>
+        <div id="sec-warning" class="section active"></div>
+        <div id="sec-prohibitory" class="section"></div>
+        <div id="sec-mandatory" class="section"></div>
+        <div id="sec-info" class="section"></div>
+        <div id="sec-ground" class="section"></div>
+        <div id="sec-order" class="section"></div>
+        <div id="sec-quiz" class="section"></div>
+    </div>
+
+    <div class="footer-bar"><p id="footerText">جميع الحقوق محفوظة لمدرسة أبو سالم لتعليم القيادة © 2026</p></div>
+    <a href="https://wa.me/96877068927" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
+
+    <script>
+        // ==================== الترجمات ====================
+        const translations = {
+            ar: {
+                mainTitle: "مدرسة أبو سالم لتعليم القيادة",
+                tabs: ["⚠️ تحذيرية", "🚫 مانعة", "✅ إلزامية", "ℹ️ إرشادية", "🛣️ أرضية", "🛑 آمرة", "📝 اختبار"],
+                quizTitle: "اختبر معلوماتك", next: "التالي",
+                correct: "إجابة صحيحة! ✅", wrong: "إجابة خاطئة ❌",
+                footer: "جميع الحقوق محفوظة لمدرسة أبو سالم لتعليم القيادة © 2026"
+            },
+            en: {
+                mainTitle: "Abu Salem Driving School",
+                tabs: ["⚠️ Warning", "🚫 Prohibitory", "✅ Mandatory", "ℹ️ Information", "🛣️ Road Marks", "🛑 Regulatory", "📝 Quiz"],
+                quizTitle: "Test Your Knowledge", next: "Next",
+                correct: "Correct! ✅", wrong: "Wrong ❌",
+                footer: "All rights reserved to Abu Salem Driving School © 2026"
+            },
+            hi: {
+                mainTitle: "अबू सलेम ड्राइविंग स्कूल",
+                tabs: ["⚠️ चेतावनी", "🚫 निषेध", "✅ अनिवार्य", "ℹ️ सूचना", "🛣️ सड़क चिह्न", "🛑 आदेश", "📝 क्विज़"],
+                quizTitle: "ज्ञान परीक्षण", next: "अगला",
+                correct: "सही! ✅", wrong: "गलत ❌",
+                footer: "सर्वाधिकार सुरक्षित © 2026"
+            },
+            ur: {
+                mainTitle: "ابو سالم ڈرائیونگ اسکول",
+                tabs: ["⚠️ انتباہ", "🚫 ممانعت", "✅ لازمی", "ℹ️ معلومات", "🛣️ سڑک نشان", "🛑 حکم", "📝 ٹیسٹ"],
+                quizTitle: "اپنا علم آزمائیں", next: "اگلا",
+                correct: "درست! ✅", wrong: "غلط ❌",
+                footer: "جملہ حقوق محفوظ © 2026"
+            },
+            bn: {
+                mainTitle: "আবু সালেম ড্রাইভিং স্কুল",
+                tabs: ["⚠️ সতর্কতা", "🚫 নিষেধ", "✅ বাধ্যতামূলক", "ℹ️ তথ্য", "🛣️ রোড মার্ক", "🛑 আদেশ", "📝 কুইজ"],
+                quizTitle: "জ্ঞান যাচাই", next: "পরবর্তী",
+                correct: "সঠিক! ✅", wrong: "ভুল ❌",
+                footer: "সর্বস্বত্ব সংরক্ষিত © 2026"
+            }
+        };
+
+        // دالة إنشاء إشارة (بدون شرح إضافي)
+        function S(id, arT, arD, enT, enD, hiT, hiD, urT, urD, bnT, bnD) {
+            return {
+                img: id + ".jpg",
+                ar: { t: arT, d: arD },
+                en: { t: enT, d: enD },
+                hi: { t: hiT, d: hiD },
+                ur: { t: urT, d: urD },
+                bn: { t: bnT, d: bnD }
+            };
+        }
+
+        const allSigns = [
+            // تحذيرية 0-35
+            S(1,"قف","توقف تماماً","Stop","Stop completely","रुकें","पूरी तरह","رکیں","مکمل","থামুন","সম্পূর্ণ"),
+            S(2,"أفسح الطريق","أعط الأولوية","Give Way","Yield","रास्ता दें","प्राथमिकता","راستہ دیں","ترجیح","রাস্তা দিন","অগ্রাধিকার"),
+            S(3,"أخطار أخرى","خطر غير محدد","Other Dangers","Unspecified","अन्य खतरे","अनिर्दिष्ट","دیگر خطرات","غیر متعین","অন্যান্য বিপদ","অনির্দিষ্ট"),
+            S(4,"إشارات ضوئية","أمامك","Traffic Lights","Ahead","ट्रैफिक लाइट","आगे","ٹریفک لائٹس","آگے","ট্রাফিক লাইট","সামনে"),
+            S(5,"طريق يضيق","من الجانبين","Road Narrows","Both sides","संकरी सड़क","दोनों ओर","تنگ سڑک","دونوں طرف","সরু রাস্তা","উভয়পাশ"),
+            S(6,"أعمال طريق","صيانة","Road Works","Maintenance","सड़क कार्य","रखरखाव","سڑک کام","مرمت","রাস্তার কাজ","মেরামত"),
+            S(7,"يضيق يميناً","من اليمين","Narrows Right","From right","दाईं संकरी","दाईं ओर","دائیں تنگ","دائیں سے","ডানে সরু","ডান থেকে"),
+            S(8,"يضيق يساراً","من اليسار","Narrows Left","From left","बाईं संकरी","बाईं ओर","بائیں تنگ","بائیں سے","বামে সরু","বাম থেকে"),
+            S(9,"صعدة","مرتفع","Steep Ascent","Uphill","चढ़ाई","ऊपर","چڑھائی","اوپر","খাড়া চড়াই","উপরে"),
+            S(10,"مرور باتجاهين","حركة متعاكسة","Two-way","Opposite","दो तरफा","विपरीत","دو طرفہ","مخالف","দ্বিমুখী","উল্টো"),
+            S(11,"منحدر","انخفاض حاد","Steep Descent","Downhill","ढलान","नीचे","ڈھلوان","نیچے","খাড়া ঢাল","নিচে"),
+            S(12,"كثبان رملية","زحف رمال","Sand Dunes","Blowing sand","रेत के टीले","उड़ती रेत","ریت کے ٹیلے","اڑتی ریت","বালিয়াড়ি","উড়ন্ত বালি"),
+            S(13,"حد ارتفاع 5م","أقصى ارتفاع","Max Height 5m","Limit","ऊंचाई 5मी","सीमा","اونچائی 5m","حد","উচ্চতা ৫মি","সীমা"),
+            S(14,"تحويل المسرب","للاتجاه المعاكس","Lane Shift","Opposite","लेन परिवर्तन","विपरीत","لین تبدیلی","مخالف","লেন পরিবর্তন","উল্টোদিকে"),
+            S(15,"مفرق T","طريق فرعي","T-Junction","Side road","टी-जंक्शन","साइड रोड","ٹی جنکشن","فرعی","টি-জংশন","পাশের রাস্তা"),
+            S(16,"تقاطع طرق","رئيسي","Crossroads","Main","चौराहा","मुख्य","چوراہا","مرکزی","ক্রসরোড","প্রধান"),
+            S(17,"أمامك دوار","دوار","Roundabout","Ahead","गोल चक्कर","आगे","گول چکر","آگے","গোলচত্বর","সামনে"),
+            S(18,"مطب","حدبة","Speed Hump","Bump","स्पीड बम्प","गतिरोधक","سپیڈ بریکر","رکاوٹ","স্পিড বাম্প","গতিরোধ"),
+            S(19,"طريق غير معبد","وعر","Unpaved Road","Rough","कच्ची सड़क","उबड़-खाबड़","کچی سڑک","ناہموار","কাঁচা রাস্তা","অমসৃণ"),
+            S(20,"صخور متساقطة","احذر","Falling Rocks","Caution","गिरती चट्टानें","सावधान","گرتی چٹانیں","خبردار","পাথর পড়া","সাবধান"),
+            S(21,"طائرات","طيران منخفض","Low Aircraft","Flying low","नीची उड़ान","विमान","نیچی پرواز","طیارے","নিচু বিমান","উড়ছে"),
+            S(22,"طريق زلق","انزلاق","Slippery Road","Skid risk","फिसलन","जोखिम","پھسلن","خطرہ","পিচ্ছিল","ঝুঁকি"),
+            S(23,"معبر أطفال","مدرسة","Children","School","बच्चे","स्कूल","بچے","اسکول","শিশু","স্কুল"),
+            S(24,"معبر وادي","مياه","Wadi Crossing","Water","नाला","पानी","نالہ","پانی","ওয়াদি","পানি"),
+            S(25,"خيول","عبور خيول","Horses","Crossing","घोड़े","क्रॉसिंग","گھوڑے","کراسنگ","ঘোড়া","পারাপার"),
+            S(26,"معبر مشاة","مشاة","Pedestrian","Walkway","पैदल यात्री","पथ","پیدل","راستہ","পথচারী","পারাপার"),
+            S(27,"مفرق يمين","طريق فرعي","Side Road Right","Minor","दाईं सड़क","छोटी","دائیں سڑک","چھوٹی","ডানের রাস্তা","গৌণ"),
+            S(28,"مفرق يسار","طريق فرعي","Side Road Left","Minor","बाईं सड़क","छोटी","بائیں سڑک","چھوٹی","বামের রাস্তা","গৌণ"),
+            S(29,"منحنى خطر","حاد","Dangerous Curve","Sharp","खतरनाक मोड़","तेज़","خطرناک موڑ","تیز","বিপজ্জনক বাঁক","তীক্ষ্ণ"),
+            S(30,"منعطفات لليسار","متتالية","Double Curve Left","Series","लगातार बाएं मोड़","क्रम","مسلسل بائیں موڑ","سلسلہ","পরপর বাম বাঁক","ক্রম"),
+            S(31,"منعطفات لليمين","متتالية","Double Curve Right","Series","लगातार दाएं मोड़","क्रम","مسلسل دائیں موڑ","سلسلہ","পরপর ডান বাঁক","ক্রম"),
+            S(32,"نهاية طريق مزدوج","نهاية","End Dual Road","End","डबल रोड खत्म","समाप्त","ڈبل روڈ ختم","ختم","দ্বৈত সড়ক শেষ","শেষ"),
+            S(33,"منعطف يسار","انعطاف","Left Bend","Curve","बायां मोड़","वक्र","بایاں موڑ","مڑیں","বাম বাঁক","বাঁক"),
+            S(34,"منعطف يمين","انعطاف","Right Bend","Curve","दायां मोड़","वक्र","دایاں موڑ","مڑیں","ডান বাঁক","বাঁক"),
+            S(35,"حيوانات سائبة","عبور","Wild Animals","Crossing","जंगली जानवर","क्रॉसिंग","جنگلی جانور","کراسنگ","বন্যপ্রাণী","পারাপার"),
+            S(36,"دراجات هوائية","عبور","Bicycles","Crossing","साइकिल","क्रॉसिंग","سائیکل","کراسنگ","সাইকেল","পারাপার"),
+            // مانعة 36-60
+            S(37,"ممنوع لليمين","يمنع الانعطاف","No Right Turn","Prohibited","दाएं मना","वर्जित","دائیں منع","ممنوع","ডানে নিষেধ","নিষেধ"),
+            S(38,"ممنوع الدوران","يمنع U-Turn","No U-Turn","Prohibited","यू-टर्न मना","मना","یو ٹرن منع","ممنوع","ইউ-টার্ন নিষেধ","নিষেধ"),
+            S(39,"ممنوع لليسار","يمنع الانعطاف","No Left Turn","Prohibited","बाएं मना","वर्जित","بائیں منع","ممنوع","বামে নিষেধ","নিষেধ"),
+            S(40,"ممنوع التجاوز","يمنع التجاوز","No Overtaking","Prohibited","ओवरटेकिंग मना","मना","اوورٹیکنگ منع","ممنوع","ওভারটেক নিষেধ","নিষেধ"),
+            S(41,"ممنوع الدخول","مرور غير مسموح","No Entry","Prohibited","प्रवेश निषेध","वर्जित","داخلہ ممنوع","ممنوع","প্রবেশ নিষেধ","নিষেধ"),
+            S(42,"ممنوع للشاحنات","تجاوز الشاحنات ممنوع","No Truck Overtaking","Prohibited","ट्रक ओवरटेकिंग मना","मना","ٹرک اوورٹیکنگ منع","منع","ট্রাক ওভারটেক নিষেধ","নিষেধ"),
+            S(43,"ممنوع الوقوف","إلا للإنزال","No Parking","Except loading","पार्किंग मना","लोडिंग के अलावा","پارکنگ منع","لوڈنگ کے سوا","পার্কিং নিষেধ","লোড ছাড়া"),
+            S(44,"ممنوع الوقوف","الركن ممنوع","No Parking","Prohibited","पार्किंग मना","मना","پارکنگ منع","منع","পার্কিং নিষেধ","নিষেধ"),
+            S(45,"ممنوع الدراجات النارية","المرور ممنوع","No Motorcycles","Prohibited","मोटरसाइकिल मना","मना","موٹر سائیکل منع","منع","মোটরসাইকেল নিষেধ","নিষেধ"),
+            S(46,"ممنوع الدراجات الهوائية","المرور ممنوع","No Bicycles","Prohibited","साइकिल मना","मना","سائیکل منع","منع","সাইকেল নিষেধ","নিষেধ"),
+            S(47,"ممنوع المشاة","المرور ممنوع","No Pedestrians","Prohibited","पैदल यात्री मना","मना","پیدل چلنا منع","منع","পথচারী নিষেধ","নিষেধ"),
+            S(48,"ممنوع الشاحنات","المرور ممنوع","No Trucks","Prohibited","ट्रक मना","मना","ٹرک منع","منع","ট্রাক নিষেধ","নিষেধ"),
+            S(49,"ممنوع العربات","المرور ممنوع","No Vehicles","Prohibited","वाहन मना","मना","گاڑیاں منع","منع","যানবাহন নিষেধ","নিষেধ"),
+            S(50,"ممنوع الخيول","المرور ممنوع","No Horses","Prohibited","घोड़े मना","मना","گھوڑے منع","منع","ঘোড়া নিষেধ","নিষেধ"),
+            S(51,"ممنوع المنبه","الهرن ممنوع","No Horn","Prohibited","हॉर्न मना","मना","ہارن منع","منع","হর্ন নিষেধ","নিষেধ"),
+            S(52,"مغلق بالاتجاهين","الطريق مغلق","Road Closed","Both directions","सड़क बंद","दोनों दिशाओं","سڑک بند","دونوں سمتوں","রাস্তা বন্ধ","উভয় দিকে"),
+            S(53,"السرعة 50","الحد الأقصى 50","Max Speed 50","Limit 50","गति 50","सीमा 50","رفتار 50","حد 50","গতি ৫০","সর্বোচ্চ ৫০"),
+            S(54,"الوزن 5 طن","الحد الأقصى","Max Weight 5T","Limit 5T","वजन 5T","सीमा 5T","وزن 5T","حد 5 ٹن","ওজন ৫ টন","সর্বোচ্চ ৫ টন"),
+            S(55,"الطول 10م","الحد الأقصى","Max Length 10m","Limit 10m","लंबाई 10m","सीमा 10m","لمبائی 10m","حد 10 میٹر","দৈর্ঘ্য ১০ মি","সর্বোচ্চ ১০ মি"),
+            S(56,"الارتفاع 3.5م","الحد الأقصى","Max Height 3.5m","Limit 3.5m","ऊंचाई 3.5m","सीमा 3.5m","اونچائی 3.5m","حد 3.5 میٹر","উচ্চতা ৩.৫মি","সর্বোচ্চ ৩.৫মি"),
+            S(57,"العرض 2م","الحد الأقصى","Max Width 2m","Limit 2m","चौड़ाई 2m","सीमा 2m","چوڑائی 2m","حد 2 میٹر","প্রস্থ ২মি","সর্বোচ্চ ২মি"),
+            S(58,"نهاية المنع","نهاية القيود","End Restriction","End","प्रतिबंध समाप्त","समाप्त","پابندی ختم","ختم","নিষেধাজ্ঞা শেষ","শেষ"),
+            S(59,"نهاية منع التجاوز","مسموح التجاوز","End No Overtaking","Allowed","ओवरटेकिंग छूट","अनुमति","اوورٹیکنگ کی اجازت","اجازت","ওভারটেক অনুমতি","অনুমতি"),
+            S(60,"نهاية السرعة","نهاية الحد 50","End Speed Limit","End limit","गति सीमा समाप्त","समाप्त","رفتار کی حد ختم","ختم","গতিসীমা শেষ","শেষ"),
+            S(61,"نهاية منع الشاحنات","مسموح تجاوز الشاحنات","End Trucks Ban","Allowed","ट्रक छूट","अनुमति","ٹرک کی پابندی ختم","اجازت","ট্রাক নিষেধাজ্ঞা শেষ","অনুমতি"),
+            // إلزامية 61-85
+            S(62,"إجباري لليمين","انعطاف إجباري يمين","Compulsory Right","Must turn right","दाएं अनिवार्य","मुड़ना होगा","لازمی دائیں","مڑنا ہوگا","বাধ্যতামূলক ডান","ঘুরতে হবে"),
+            S(63,"إجباري لليسار","انعطاف إجباري يسار","Compulsory Left","Must turn left","बाएं अनिवार्य","मुड़ना होगा","لازمی بائیں","مڑنا ہوگا","বাধ্যতামূলক বাম","ঘুরতে হবে"),
+            S(64,"للأمام فقط","مسار إجباري للأمام","Ahead Only","Straight only","केवल सीधे","सीधे जाएं","صرف سیدھے","سیدھے جائیں","শুধুমাত্র সোজা","সোজা যান"),
+            S(65,"للأمام أو اليمين","فقط","Ahead or Right","Only","सीधे या दाएं","केवल","سیدھے یا دائیں","صرف","সোজা বা ডানে","শুধুমাত্র"),
+            S(66,"للأمام أو اليسار","فقط","Ahead or Left","Only","सीधे या बाएं","केवल","سیدھے یا بائیں","صرف","সোজা বা বামে","শুধুমাত্র"),
+            S(67,"إتجه لليمين","انعطاف يمين","Turn Right","Right","दाएं मुड़ें","दाएं","دائیں مڑیں","دائیں","ডানে মোড়","ডান"),
+            S(68,"إتجه لليسار","انعطاف يسار","Turn Left","Left","बाएं मुड़ें","बाएं","بائیں مڑیں","بائیں","বামে মোড়","বাম"),
+            S(69,"دوران للخلف","U-Turn إجباري","Compulsory U-Turn","Must turn around","यू-टर्न अनिवार्य","मुड़ना होगा","لازمی یو ٹرن","مڑنا ہوگا","বাধ্যতামূলক ইউ-টার্ন","ঘুরতে হবে"),
+            S(70,"إلزم اليمين","ابق يميناً","Keep Right","Stay right","दाईं ओर रहें","दाईं ओर","دائیں رہیں","دائیں طرف","ডানদিকে থাকুন","ডানদিকে"),
+            S(71,"إلزم اليسار","ابق يساراً","Keep Left","Stay left","बाईं ओर रहें","बाईं ओर","بائیں رہیں","بائیں طرف","বামদিকে থাকুন","বামদিকে"),
+            S(72,"مرور من الجانبين","يمين أو يسار","Pass Either Side","Right or left","किसी भी तरफ","दाएं या बाएं","کسی بھی طرف","دائیں یا بائیں","যে কোন পাশ","ডান বা বাম"),
+            S(73,"دوار إلزامي", "يجب الدوران مع الدوار", "Mandatory Roundabout", "Must follow roundabout", "अनिवार्य गोल चक्कर", "गोल चक्कर की दिशा मानें", "لازمی گول چکر", "گول چکر کی سمت پر عمل کریں", "বাধ্যতামূলক গোলচত্বর", "গোলচত্বর অনুসরণ করুন"),
+          
+            // إرشادية 73-102
+                        S(79,"الشاحنات يميناً","إلزم اليمين للشاحنات","Trucks Keep Right","Trucks right","ट्रक दाईं ओर","दाईं ओर","ٹرک دائیں","دائیں طرف","ট্রাক ডানদিকে","ডানদিকে"),
+            S(80,"اتجاه واحد","طريق باتجاه واحد","One Way","One way street","एक तरफा","एक तरफा रास्ता","ایک طرفہ","ایک طرفہ سڑک","একমুখী","একমুখী রাস্তা"),
+            S(81,"دوار مع العقارب","دوران لليمين","Roundabout Right","Clockwise","गोल चक्कर दाएं","दक्षिणावर्त","گول چکر دائیں","گھڑی کی سمت","গোলচত্বর ডান","ঘড়ির কাঁটার দিকে"),
+            S(82,"دوار ضد العقارب","دوران لليسار","Roundabout Left","Anti-clockwise","गोल चक्कर बाएं","वामावर्त","گول چکر بائیں","گھڑی کی الٹی سمت","গোলচত্বর বাম","ঘড়ির কাঁটার বিপরীতে"),
+            S(84,"مواقف الباصات","مخصصة للحافلات","Bus Parking","Buses only","बस पार्किंग","बसों के लिए","بس پارکنگ","بسوں کے لیے","বাস পার্কিং","বাসের জন্য"),
+            S(85,"مواقف المعاقين","ذوي الاحتياجات الخاصة","Handicap Parking","Disabled only","विकलांग पार्किंग","विकलांग","معذور پارکنگ","معذور افراد","প্রতিবন্ধী পার্কিং","প্রতিবন্ধী"),
+            S(87,"مستشفى","مستشفى قريب","Hospital","Nearby","अस्पताल","अस्पताल","ہسپتال","ہسپتال","হাসপাতাল","হাসপাতাল"),
+            S(88,"محطة بترول","وقود","Petrol Station","Fuel","पेट्रोल पंप","ईंधन","پیٹرول پمپ","ایندھن","পেট্রোল পাম্প","জ্বালানী"),
+            S(89,"مطعم ومقهى","استراحة","Restaurant","Coffee Shop","भोजनालय","कैफे","ریسٹورنٹ","کیفے","রেস্টুরেন্ট","ক্যাফে"),
+            S(90,"مركز إسعاف","طوارئ","First Aid","Station","प्राथमिक चिकित्सा","केंद्र","ابتدائی طبی امداد","مرکز","প্রাথমিক চিকিৎসা","কেন্দ্র"),
+            S(91,"هاتف عام","للاتصال","Telephone","Public phone","टेलीफोन","सार्वजनिक","ٹیلی فون","عوامی","টেলিফোন","পাবলিক"),
+            S(92,"مخيمات","موقع للتخييم","Camping","Site","कैंपिंग","स्थल","کیمپنگ","جگہ","ক্যাম্পিং","সাইট"),
+            S(93,"بداية طريق سيار","طريق سريع","Start Highway","Highway","राजमार्ग शुरू","शुरू","ہائی وے شروع","شروع","মহাসড়ক শুরু","শুরু"),
+            S(94,"نهاية طريق سيار","نهاية السريع","End Highway","End","राजमार्ग समाप्त","समाप्त","ہائی وے ختم","ختم","মহাসড়ক শেষ","শেষ"),
+            S(95,"ورشة تصليح","خدمات سيارات","Breakdown","Service","मरम्मत","सेवा","مرمت","سروس","মেরামত","পরিষেবা"),
+            S(96,"نفق مشاة","ممر سفلي","Subway","Pedestrians","सबवे","पैदल","سب وے","پیدل","সাবওয়ে","পথচারী"),
+            S(97,"أسماء أماكن","مسقط - مطرح","Places Names","Directions","स्थानों के नाम","दिशाएं","جگہوں کے نام","ہدایات","জায়গার নাম","দিকনির্দেশ"),
+            S(98,"طريق غير نافذ","مسدود للأمام","No Through Road","Dead end","बंद गली","आगे रास्ता नहीं","بند گلی","آگے راستہ نہیں","বন্ধ রাস্তা","সামনে রাস্তা নেই"),
+            S(99,"مواقف","للركن","Parking","Parking area","पार्किंग","पार्किंग","پارکنگ","پارکنگ","পার্কিং","পার্কিং"),
+            S(100,"متبقي 200م","للمخرج","Remaining 200m","To exit","200m शेष","निकास","200 میٹر باقی","نکلنے","২০০মি বাকি","প্রস্থান"),
+            S(101,"متبقي 100م","للمخرج","Remaining 100m","To exit","100m शेष","निकास","100 میٹر باقی","نکلنے","১০০মি বাকি","প্রস্থান"),
+            S(102,"متبقي 300م","للمخرج","Remaining 300m","To exit","300m शेष","निकास","300 میٹر باقی","نکلنے","৩০০মি বাকি","প্রস্থান"),
+            // أرضية 103-150
+            S(103,"وقوف مسموح","P","Yes Parking","Allowed","पार्किंग हां","अनुमति","پارکنگ ہاں","اجازت","পার্কিং হ্যাঁ","অনুমতি"),
+            S(104,"وقوف للتحميل","طوارئ","Parking Loading","Emergency","लोडिंग पार्किंग","आपातकाल","لوڈنگ پارکنگ","ہنگامی","লোডিং পার্কিং","জরুরী"),
+            S(105,"تجاوز بحذر","مسموح بحذر","Overtaking Carefully","Allowed","ओवरटेकिंग","सावधानी","اوورٹیکنگ","احتیاط","ওভারটেকিং","সাবধানে"),
+            S(106,"تجاوز مسموح","من الجانبين","Overtaking Allowed","Both sides","ओवरटेकिंग छूट","अनुमति","اوورٹیکنگ","اجازت","ওভারটেক","অনুমতি"),
+            S(107,"عبور مشاة","معبر مشاة آمن","Safe Crossing","Pedestrians","सुरक्षित क्रॉसिंग","पैदल","محفوظ کراسنگ","پیدل","নিরাপদ পারাপার","পথচারী"),
+            S(112,"خط قف","علامة أرضية للتوقف","Stop Line","Road marking","स्टॉप लाइन","रुकें","اسٹاپ لائن","رکیں","স্টপ লাইন","থামুন"),
+            S(113,"ممنوع التجاوز","خط متصل","No Overtaking","Solid line","ओवरटेकिंग मना","मना","اوورٹیکنگ منع","منع","ওভারটেক নিষেধ","নিষেধ"),
+            S(114,"تجاوز باتجاهين","مسموح","Overtaking Both","Sides","दोनों तरफ से","अनुमति","دونوں طرف سے","اجازت","উভয় দিক থেকে","অনুমতি"),
+            S(115,"تجاوز من المتقطع","مسموح","Overtaking","Cutting line","कटी लाइन से","अनुमति","کٹی لائن سے","اجازت","কাটা লাইন থেকে","অনুমতি"),
+            S(116,"ممنوع التجاوز","خطين متصلين","No Overtaking","Double line","ओवरटेकिंग मना","डबल लाइन","اوورٹیکنگ منع","ڈبل لائن","ওভারটেক নিষেধ","ডাবল লাইন"),
+            S(119,"خط محاذاة","خط تنظيم الطريق","Alignment Line","Marking","संरेखण लाइन","सड़क","سیدھ لائن","سڑک","প্রান্তিককরণ লাইন","রাস্তা"),
+            S(120,"مواقف معاقين","علامة أرضية للمعاقين","Handicap Mark","Parking","विकलांग चिह्न","पार्किंग","معذور نشان","پارکنگ","প্রতিবন্ধী চিহ্ন","পার্কিং"),
+            S(121,"ممنوع الوقوف","خط أصفر","No Parking","Yellow line","पार्किंग मना","पीली लाइन","پارکنگ منع","پیلی لائن","পার্কিং নিষেধ","হলুদ লাইন"),
+            S(122,"قف (أرضية)","علامة أرضية قف","Stop Text","Marking","स्टॉप टेक्स्ट","चिह्न","اسٹاپ ٹیکسٹ","نشان","স্টপ টেক্সট","চিহ্ন"),
+            S(123,"أفسح الطريق","علامة أرضية","Give Way Text","Marking","रास्ता दें टेक्स्ट","चिह्न","راستہ دیں ٹیکسٹ","نشان","রাস্তা দিন টেক্সট","চিহ্ন"),
+            S(124, "الطريق ذو المسار الواحد", "علامة أرضية لطريق باتجاه واحد",
+   "One Lane Road", "Road marking for one-way traffic",
+   "एक लेन सड़क", "एक तरफा यातायात के लिए सड़क चिह्न",
+   "ایک لین سڑک", "یک طرفہ ٹریفک کے لیے سڑک کا نشان",
+   "এক লেনের রাস্তা", "একমুখী ট্রাফিকের জন্য রাস্তার চিহ্ন"),
+            S(125,"جزيرة مخططة","علامة أرضية","Zebra Island","Marking","ज़ेबरा द्वीप","चिह्न","زیبرا جزیرہ","نشان","জেব্রা দ্বীপ","চিহ্ন"),
+           
+           S(128,"معبر مشاة أرضي","خطوط المشاة","Pedestrian Crossing","Zebra crossing","पैदल क्रॉसिंग","ज़ेबरा","پیدل کراسنگ","زیبرا","পথচারী পারাপার","জেব্রা"),
+            S(129,"منطقة التحميل","منطقة تحميل وتنزيل","Loading Zone","Loading area","लोडिंग क्षेत्र","क्षेत्र","لوڈنگ زون","علاقہ","লোডিং জোন","এলাকা"),
+          
+            S(131, "مسموح الوقوف", "علامة أرضية للوقوف المسموح", "Parking Allowed", "Road marking for permitted parking", "पार्किंग की अनुमति", "अनुमत पार्किंग के लिए सड़क चिह्न", "پارکنگ کی اجازت", "مجاز پارکنگ کے لیے سڑک کا نشان", "পার্কিং অনুমোদিত", "অনুমোদিত পার্কিংয়ের জন্য রাস্তার চিহ্ন"),
+            S(132, "ممنوع دخول المربعات الصفراء", "لا تدخل حتى يكون المخرج سالكاً",
+   "Do Not Enter Yellow Box", "Keep junction clear until exit is free",
+   "पीला बॉक्स जंक्शन में प्रवेश न करें", "जब तक निकास खाली न हो, जंक्शन साफ रखें",
+   "پیلے باکس میں داخل نہ ہوں", "جب تک راستہ صاف نہ ہو، جنکشن خالی رکھیں",
+   "হলুদ বক্সে প্রবেশ করবেন না", "প্রস্থান পরিষ্কার না হওয়া পর্যন্ত জংশন খালি রাখুন"),
+            S(133, "الطريق ذو المسارين", "علامة أرضية لطريق باتجاهين",
+   "Two Lane Road", "Road marking for two-way traffic",
+   "दो लेन सड़क", "दो तरफा यातायात के लिए सड़क चिह्न",
+   "دو لین سڑک", "دو طرفہ ٹریفک کے لیے سڑک کا نشان",
+   "দুই লেনের রাস্তা", "দ্বিমুখী ট্রাফিকের জন্য রাস্তার চিহ্ন"),
+   S(134, "ممنوع الوقوف إلا لحافلات المواصلات", "موقف مخصص لحافلات شركة المواصلات فقط",
+   "No Parking Except Mwasalat Buses", "Parking reserved for Mwasalat company buses only",
+   "मवासलात बसों को छोड़कर पार्किंग मना", "केवल मवासलात कंपनी की बसों के लिए आरक्षित",
+   "مواصلات بسوں کے علاوہ پارکنگ منع", "صرف مواصلات کمپنی کی بسوں کے لیے مختص",
+   "মাওয়াসালাত বাস ছাড়া পার্কিং নিষেধ", "শুধুমাত্র মাওয়াসালাত কোম্পানির বাসের জন্য সংরক্ষিত"),
+   S(135, "خطوط تحذيرية للدوارات والمنحنيات", "علامة أرضية للتحذير من خطر غير واضح كالدوارات والمنحنيات الخطرة",
+   "Warning Lines for Roundabouts and Curves", "Road marking warning of hidden dangers like roundabouts and dangerous curves",
+   "गोल चक्करों और मोड़ों के लिए चेतावनी लाइनें", "छिपे खतरों जैसे गोल चक्करों और खतरनाक मोड़ों की चेतावनी",
+   "گول چکروں اور موڑوں کے لیے انتباہی لائنیں", "چھپے خطرات جیسے گول چکروں اور خطرناک موڑوں کا انتباہ",
+   "গোলচত্বর এবং বাঁকের জন্য সতর্কতা লাইন", "গোপন বিপদ যেমন গোলচত্বর এবং বিপজ্জনক বাঁকের সতর্কতা"),
+   S(136, "ممنوع التجاوز قطعياً", "علامة أرضية تمنع التجاوز بشكل قطعي",
+   "Strictly No Overtaking", "Road marking prohibiting all overtaking",
+   "ओवरटेकिंग सख्त मना", "सभी ओवरटेकिंग को प्रतिबंधित करने वाला सड़क चिह्न",
+   "اوورٹیکنگ سختی سے منع", "تمام اوورٹیکنگ کو منع کرنے والا سڑک کا نشان",
+   "ওভারটেক সম্পূর্ণ নিষেধ", "সকল ওভারটেক নিষিদ্ধ করার রাস্তার চিহ্ন"),
+   S(137, "الانعطاف مسموح", "علامة أرضية تسمح بالانعطاف",
+   "Turning Allowed", "Road marking permitting turns",
+   "मोड़ की अनुमति", "मोड़ की अनुमति देने वाला सड़क चिह्न",
+   "موڑ کی اجازت", "موڑ کی اجازت دینے والا سڑک کا نشان",
+   "বাঁক নেওয়ার অনুমতি", "বাঁক নেওয়ার অনুমতি প্রদানকারী রাস্তার চিহ্ন"),
+   S(138, "مسموح التجاوز", "علامة أرضية تسمح بتجاوز المركبات",
+   "Overtaking Allowed", "Road marking permitting overtaking",
+   "ओवरटेकिंग की अनुमति", "वाहनों को ओवरटेक करने की अनुमति देने वाला सड़क चिह्न",
+   "اوورٹیکنگ کی اجازت", "گاڑیوں کو اوورٹیک کرنے کی اجازت دینے والا سڑک کا نشان",
+   "ওভারটেকিং অনুমোদিত", "যানবাহন ওভারটেক করার অনুমতি প্রদানকারী রাস্তার চিহ্ন"),
+
+S(139, "ممنوع التجاوز", "علامة أرضية تمنع تجاوز المركبات",
+   "No Overtaking", "Road marking prohibiting overtaking",
+   "ओवरटेकिंग मना", "वाहनों को ओवरटेक करने से मना करने वाला सड़क चिह्न",
+   "اوورٹیکنگ منع", "گاڑیوں کو اوورٹیک کرنے سے منع کرنے والا سڑک کا نشان",
+   "ওভারটেকিং নিষেধ", "যানবাহন ওভারটেক করতে নিষেধ করার রাস্তার চিহ্ন"),
+            // آمرة 2-0
+            S(1,"قف","علامة أمر بالوقوف","Stop","Regulatory stop","रुकें","नियामक","رکیں","لازمی","থামুন","বাধ্যতামূলক"),
+            S(2,"أفسح الطريق","علامة أمر بإفساح الطريق","Give Way","Regulatory yield","रास्ता दें","नियामक","راستہ دیں","لازمی","রাস্তা দিন","বাধ্যতামূলক")
+        ];
+
+        let currentLang = 'ar';
+        let currentTab = 'warning';
+        let quizIndex = 0;
+        let quizActive = false;
+
+        function buildTabs() {
+            const container = document.getElementById('tabsContainer');
+            const tabs = translations[currentLang].tabs;
+            const keys = ['warning', 'prohibitory', 'mandatory', 'info', 'ground', 'order', 'quiz'];
+            container.innerHTML = '';
+            tabs.forEach((name, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'tab' + (keys[i] === currentTab ? ' active' : '');
+                btn.innerText = name;
+                btn.onclick = () => switchTab(keys[i]);
+                container.appendChild(btn);
+            });
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('sec-' + tabId).classList.add('active');
+            buildTabs();
+            if (tabId === 'quiz') startQuiz();
+        }
+
+        function renderSection(sectionId, startIdx, endIdx) {
+            const container = document.getElementById('sec-' + sectionId);
+            if (!container) return;
+            const idx = ['warning','prohibitory','mandatory','info','ground','order','quiz'].indexOf(sectionId);
+            let html = `<h2 style="text-align:center; margin-bottom:15px;">${translations[currentLang].tabs[idx]}</h2><div class="signs-grid">`;
+            for (let i = startIdx; i < endIdx; i++) {
+                if (i >= allSigns.length) break;
+                const s = allSigns[i];
+                const d = s[currentLang];
+                html += `
+                    <div class="sign-card">
+                        <img src="${s.img}" alt="${d.t}" onerror="this.style.display='none'">
+                        <h3>${d.t}</h3>
+                        <p class="desc">${d.d}</p>
+                    </div>`;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderAllSections() {
+            renderSection('warning', 2, 36);
+            renderSection('prohibitory', 36, 61);
+            renderSection('mandatory', 61, 73);
+            renderSection('info', 73, 95);
+            renderSection('ground', 103, 139);
+            renderSection('order', 0, 2);
+            document.getElementById('sec-quiz').innerHTML = `
+                <div class="quiz-section">
+                    <h2>${translations[currentLang].quizTitle}</h2>
+                    <img id="quizImg" class="quiz-image" src="" style="display:none;">
+                    <div id="quizOptions" class="options"></div>
+                    <p id="quizFeedback" class="feedback"></p>
+                    <button id="quizNext" class="next-btn" onclick="nextQuiz()">${translations[currentLang].next}</button>
+                </div>`;
+        }
+
+        function updateInterface() {
+            currentLang = document.getElementById('langSelect').value;
+            document.getElementById('mainTitle').innerText = translations[currentLang].mainTitle;
+            document.getElementById('footerText').innerText = translations[currentLang].footer;
+            buildTabs();
+            renderAllSections();
+            switchTab(currentTab);
+        }
+
+        function startQuiz() {
+            quizActive = true;
+            quizIndex = Math.floor(Math.random() * allSigns.length);
+            const q = allSigns[quizIndex];
+            document.getElementById('quizImg').src = q.img;
+            document.getElementById('quizImg').style.display = 'block';
+            document.getElementById('quizFeedback').innerText = '';
+            document.getElementById('quizNext').style.display = 'none';
+            const correct = q[currentLang].t;
+            let opts = [correct];
+            while (opts.length < 3) {
+                const r = allSigns[Math.floor(Math.random() * allSigns.length)][currentLang].t;
+                if (!opts.includes(r)) opts.push(r);
+            }
+            opts.sort(() => Math.random() - 0.5);
+            const container = document.getElementById('quizOptions');
+            container.innerHTML = '';
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt === correct);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, isCorrect) {
+            if (!quizActive) return;
+            quizActive = false;
+            const btns = document.querySelectorAll('#quizOptions .option-btn');
+            btns.forEach(b => b.disabled = true);
+            if (isCorrect) {
+                btn.classList.add('correct');
+                document.getElementById('quizFeedback').innerText = translations[currentLang].correct;
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('quizFeedback').innerText = translations[currentLang].wrong;
+                btns.forEach(b => {
+                    if (b.innerText === allSigns[quizIndex][currentLang].t) b.classList.add('correct');
+                });
+            }
+            document.getElementById('quizNext').style.display = 'inline-block';
+        }
+
+        function nextQuiz() {
+            quizActive = true;
+            startQuiz();
+        }
+
+        function changeLanguage() {
+            updateInterface();
+        }
+
+        window.onload = updateInterface;
+    </script>
+</body>
+</html>
